@@ -23,7 +23,6 @@ form {
 input {
     width: 65%;
     border: solid #3e08aa 2px;
-    /* background-color: #9a00fa; */
 }
 
 input,
@@ -108,8 +107,12 @@ button {
     background-color: #3e08aa;
 }
 
-@media (max-width: 850px) {
+@media (max-width: 750px) {
     .container {
         min-width: 80vw;
+    }
+
+    .tmep-img {
+        width: 50%;
     }
 }
