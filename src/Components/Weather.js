@@ -54,7 +54,7 @@ const Weather = () => {
         return "Assets/snow.png";
 
       default:
-        return "";
+        return "Assets/cloud.png";
     }
   };
 
