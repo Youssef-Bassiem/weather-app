@@ -3,11 +3,12 @@
     flex-direction: column;
     justify-content: space-evenly;
     align-items: center;
-    width: 40vw;
+    min-width: 35%;
+    max-width: 50%;
     margin: 0 auto;
     border-radius: 1rem;
     box-shadow: 0 0 8px black;
-    height: 90%;
+    height: 80%;
     background: #161a2b
 }
 
@@ -107,12 +108,19 @@ button {
     background-color: #3e08aa;
 }
 
-@media (max-width: 750px) {
+@media (max-width: 840px) {
     .container {
-        min-width: 80vw;
+        min-width: 60%;
+        height: 75%;
     }
 
     .tmep-img {
-        width: 50%;
+        width: 40%;
+    }
+}
+@media (max-width: 555px) {
+    .container {
+        min-width: 90%;
+        height: 65%;
     }
 }
