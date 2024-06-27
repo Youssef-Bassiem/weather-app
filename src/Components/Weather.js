@@ -1,31 +1,35 @@
-import { useCallback, useEffect, useRef, useState } from "react";
-import IconSearch from "./IconSearch";
+import { useEffect, useRef, useState } from "react";
 import "./Weather.css";
 import Details from "./Details";
 import axios from "axios";
+import TextField from "@mui/material/TextField";
+import Autocomplete from "@mui/material/Autocomplete";
+import { styled } from "@mui/material/styles";
 
-let prevState;
+const WEATHER_API_URL = "https://api.openweathermap.org/data/2.5";
+const WEATHER_API_KEY = "87b4eadd450ee8f3f2ab5f63469b1be9";
+const GEO_API_URL = "https://wft-geo-db.p.rapidapi.com/v1/geo";
+const geoApiOptions = {
+  method: "GET",
+  headers: {
+    "X-RapidAPI-Key": "7842948c62msh64be6482a274037p14d610jsn4e30d1dc7dd3",
+    "X-RapidAPI-Host": "wft-geo-db.p.rapidapi.com",
+  },
+};
 
+const CssTextField = styled(TextField)({
+  "& .MuiInput-underline:after": {
+    borderColor: "red",
+  },
+});
 const Weather = () => {
-  const apiKey = "efe78cc261a450fd157a5acdd629a2b3";
-  const [city, setCity] = useState("Cairo");
+  const [city, setCity] = useState("");
   const [data, setData] = useState(null);
-  const inputRef = useRef(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [suggestions, setSuggestions] = useState([]);
+  const [selectedCity, setSelectedCity] = useState("");
 
-  const searchApi = useCallback((c) => {
-    if (c !== prevState) {
-      prevState = c;
-      let url =
-        `https://api.openweathermap.org/data/2.5/weather?q=${c}&appid=` +
-        apiKey;
-      axios
-        .get(url)
-        .then((response) => {
-          setData({ ...response.data });
-        })
-        .catch(() => setData(null));
-    }
-  }, []);
+  const inputRef = useRef(null);
 
   const changeIcon = () => {
     switch (data.weather[0].icon) {
@@ -59,30 +63,92 @@ const Weather = () => {
   };
 
   useEffect(() => {
-    searchApi("Cairo");
+    if (!city) {
+      setSuggestions([]);
+      return;
+    }
+
+    const controller = new AbortController();
+    function fetchGeo() {
+      axios
+        .get(`${GEO_API_URL}/cities?minPopulation=1000000&namePrefix=${city}`, {
+          ...geoApiOptions,
+          signal: controller.signal,
+        })
+        .then((response) => {
+          setSuggestions(response.data.data);
+        })
+        .catch((err) => err.name !== "CanceledError" && console.error(err));
+    }
+    const timer = setTimeout(() => fetchGeo(), 800);
+    return () => {
+      clearTimeout(timer);
+      controller.abort();
+    };
+  }, [city, data]);
+
+  useEffect(() => {
+    if (!selectedCity) return;
+    setIsLoading(true);
+    function fetchWeather(lat, lon) {
+      axios
+        .get(
+          `${WEATHER_API_URL}/weather?lat=${lat}&lon=${lon}&appid=${WEATHER_API_KEY}&units=metric`
+        )
+        .then((response) => {
+          setData({ ...response.data });
+        })
+        .catch((err) => console.error(err.message))
+        .finally(() => setIsLoading(false));
+    }
+    fetchWeather(selectedCity.lat, selectedCity.lon);
+  }, [selectedCity]);
+
+  useEffect(() => {
     inputRef.current.focus();
-  }, [searchApi]);
+  }, []);
 
   return (
     <div className="container">
-      <form onSubmit={(e) => e.preventDefault()}>
-        <input
-          type="text"
-          ref={inputRef}
-          placeholder="Search"
-          value={city}
-          onChange={(e) => setCity(e.target.value)}
+      <div className="con">
+        <Autocomplete
+          className="Async"
+          freeSolo
+          onChange={(_, value) => {
+            if (value !== null) {
+              setSelectedCity({
+                label: value.label,
+                lat: value.value.split(" ")[0],
+                lon: value.value.split(" ")[1],
+              });
+            }
+          }}
+          id="combo-box-demo"
+          options={suggestions.map((el) => {
+            return {
+              label: `${el.name}`,
+              value: `${el.latitude} ${el.longitude}`,
+            };
+          })}
+          sx={{ width: 300 }}
+          renderInput={(params) => (
+            <CssTextField
+              inputRef={inputRef}
+              onChange={(e) => setCity(e.target.value)}
+              {...params}
+            />
+          )}
         />
-        <button onClick={() => searchApi(city)}>
-          <IconSearch />
-        </button>
-      </form>
-      {data ? (
+      </div>
+
+      {isLoading ? (
+        "Loading..."
+      ) : data ? (
         <>
           <img className="tmep-img" src={changeIcon()} alt="" />
           <div className="temp-city">
-            <h1>{(data.main.temp - 273.15).toFixed(1)}&deg;C</h1>
-            <h2>{data.name}</h2>
+            <h1>{data.main.temp.toFixed(1)}&deg;C</h1>
+            <h2>{selectedCity.label}</h2>
           </div>
           <div className="data">
             <Details text={"humidity"} value={data.main.humidity} unit={"%"} />
@@ -93,8 +159,10 @@ const Weather = () => {
             />
           </div>
         </>
-      ) : (
+      ) : selectedCity ? (
         <div className="not-found">Enter valid city</div>
+      ) : (
+        ""
       )}
     </div>
   );
