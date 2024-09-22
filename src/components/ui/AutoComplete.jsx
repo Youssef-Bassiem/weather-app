@@ -33,7 +33,9 @@ export function AutoComplete({
     }
     setOpen(false);
   };
-
+  // const onInputBlur = () => {
+  //   onSearchValueChange(" ");
+  // };
   return (
     <div>
       <Popover open={open} onOpenChange={setOpen}>
@@ -41,6 +43,7 @@ export function AutoComplete({
           <PopoverAnchor asChild>
             <CommandPrimitive.Input
               asChild
+              // onBlur={onInputBlur}
               className="w-64 max-sm:w-44"
               value={searchValue}
               onValueChange={onSearchValueChange}

@@ -6,13 +6,20 @@
   #root {
     display: flex;
     justify-content: center;
-    align-items: center;
-    height: 100vh;
+    /* align-items: center; */
+    height: 100svh;
     background: linear-gradient(
       90deg,
       rgba(48, 16, 255, 1) 0%,
       rgba(100, 115, 255, 1) 100%
     );
+  }
+  /* ::-ms-reveal {
+    background-color: none;
+    background-image: none;
+  } */
+  :root {
+    --radius: 0.5rem;
   }
 }
 
@@ -21,6 +28,7 @@
   .no-scrollbar::-webkit-scrollbar {
     display: none;
   }
+
   /* Hide scrollbar for IE, Edge and Firefox */
   .no-scrollbar {
     -ms-overflow-style: none; /* IE and Edge */

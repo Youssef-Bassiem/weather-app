@@ -1,5 +1,5 @@
 import { useState } from "react";
-import Details from "./ui/Details";
+import Details from "../components/ui/Details";
 import { AutoComplete } from "@/components/ui/AutoComplete";
 import { LoadingSpinner } from "@/components/ui/LoadingSpinner";
 import { useSuggestions } from "@/hooks/useSuggestions";
@@ -15,10 +15,10 @@ const Weather = () => {
   const { weatherData, isLoading: isLoadingSelected } =
     useWeather(selectedCity);
 
-  const weatherImageSrc = weatherImage(weatherData?.weather[0].icon);
+  const weatherImageSrc = weatherImage(weatherData?.weather[0]?.icon);
 
   return (
-    <main className="no-scrollbar flex h-5/6 w-[35rem] flex-col items-center justify-between overflow-y-scroll rounded-xl bg-[#161a2b] py-12 shadow-[0px_0px_8px_black] max-sm:w-96">
+    <main className="no-scrollbar mt-14 flex h-5/6 w-[35rem] flex-col items-center justify-between overflow-y-scroll rounded-xl bg-[#161a2b] py-12 shadow-[0px_0px_8px_black] max-sm:h-3/4 max-sm:w-96">
       <AutoComplete
         class
         emptyMessage="No results found."
@@ -31,7 +31,7 @@ const Weather = () => {
       />
 
       {isLoadingSelected ? (
-        <Skeleton className="flex h-96 w-96 place-content-center place-items-center bg-[#2b304c] opacity-80">
+        <Skeleton className="mt-4 flex h-96 w-80 place-content-center place-items-center bg-[#2b304c] opacity-80">
           <LoadingSpinner className="h-12 w-12 text-black opacity-80" />
         </Skeleton>
       ) : weatherData ? (
