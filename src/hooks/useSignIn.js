@@ -13,7 +13,7 @@ export function useSignIn() {
     onSuccess: ({ user }) => {
       setDoc(doc(db, "users", user.email), {
         name: user.displayName,
-        emailVerified: user.emailVerified,
+        emailVerified: true,
       });
       queryClient.invalidateQueries(["user"]);
       toast({

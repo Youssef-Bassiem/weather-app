@@ -6,7 +6,7 @@ import ProtectedRoute from "./pages/ProtectedRoute";
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import { Toaster } from "./components/ui/toaster";
 import Account from "./components/Account";
-
+import NotFound from "./pages/NotFound";
 const queryClient = new QueryClient();
 
 queryClient.setDefaultOptions({
@@ -22,6 +22,7 @@ function App() {
     <QueryClientProvider client={queryClient}>
       <BrowserRouter>
         <Account />
+
         <Routes>
           <Route index element={<Navigate to="/login" />} />
           <Route path="/login" element={<LoginForm />} />
@@ -34,7 +35,7 @@ function App() {
               </ProtectedRoute>
             }
           />
-          <Route path="*" element={<div>Not Found 404</div>} />
+          <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
       <Toaster />

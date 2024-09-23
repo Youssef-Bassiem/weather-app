@@ -12,10 +12,10 @@ export function Toaster() {
   const { toasts } = useToast();
 
   return (
-    <ToastProvider duration={5000}>
+    <ToastProvider duration={2500}>
       {toasts.map(function ({ id, title, description, action, ...props }) {
         return (
-          <Toast key={id} {...props}>
+          <Toast className="max-md:w-80" key={id} {...props}>
             <div className="space-y-1">
               {title && <ToastTitle>{title}</ToastTitle>}
               {description && (

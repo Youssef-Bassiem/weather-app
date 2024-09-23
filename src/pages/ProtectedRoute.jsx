@@ -9,13 +9,18 @@ export default function ProtectedRoute({ children }) {
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (!user?.emailVerified && !isPending) {
+    if (
+      (!user ||
+        (!user?.emailVerified &&
+          user?.providerData[0]?.providerId === "password")) &&
+      !isPending
+    ) {
       toast({
         variant: "destructive",
         title: "Invalid",
         description: "Please verify your email first",
       });
-      navigate("/login");
+      navigate("/login", { replace: true });
     }
   }, [user, isPending, navigate]);
 

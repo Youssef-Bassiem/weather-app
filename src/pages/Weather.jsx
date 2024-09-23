@@ -20,7 +20,6 @@ const Weather = () => {
   return (
     <main className="no-scrollbar mt-14 flex h-5/6 w-[35rem] flex-col items-center justify-between overflow-y-scroll rounded-xl bg-[#161a2b] py-12 shadow-[0px_0px_8px_black] max-sm:h-3/4 max-sm:w-96">
       <AutoComplete
-        class
         emptyMessage="No results found."
         selectedValue={selectedCity}
         onSelectedValueChange={setSelectedCity}

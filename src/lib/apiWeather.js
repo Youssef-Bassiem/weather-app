@@ -17,7 +17,9 @@ export async function getGeo(city) {
     .then((response) => {
       return response.data.data;
     })
-    .catch((err) => err);
+    .catch((err) => {
+      throw err;
+    });
 }
 
 const WEATHER_API_URL = "https://api.openweathermap.org/data/2.5";
@@ -31,5 +33,7 @@ export async function getWeather(lat, lon) {
     .then((response) => {
       return response.data;
     })
-    .catch((err) => err);
+    .catch((err) => {
+      throw err;
+    });
 }

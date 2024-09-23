@@ -27,7 +27,6 @@ export async function login({ email, password }) {
 }
 
 export async function logout() {
-  console.log("logoutApi");
   return await signOut(auth);
 }
 

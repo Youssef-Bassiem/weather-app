@@ -1,5 +1,5 @@
 import { Command as CommandPrimitive } from "cmdk";
-import { useState } from "react";
+import { useState, useRef } from "react";
 import {
   Command,
   CommandEmpty,
@@ -23,14 +23,20 @@ export function AutoComplete({
   placeholder = "Search...",
 }) {
   const [open, setOpen] = useState(false);
+  const uniqueItems = items.filter(
+    (item, index) => index === items.findIndex((el) => el.name === item.name),
+  );
+    const inputRef = useRef(null);
+
 
   const onSelectItem = (inputValue) => {
     if (inputValue.label === selectedValue.label) {
-      onSearchValueChange(" ");
+      onSearchValueChange("");
     } else {
       onSelectedValueChange(inputValue);
       onSearchValueChange(inputValue.label ?? "");
     }
+    inputRef.current.blur();
     setOpen(false);
   };
   // const onInputBlur = () => {
@@ -39,21 +45,34 @@ export function AutoComplete({
   return (
     <div>
       <Popover open={open} onOpenChange={setOpen}>
-        <Command shouldFilter={false}>
+        <Command className="relative" shouldFilter={false}>
           <PopoverAnchor asChild>
             <CommandPrimitive.Input
               asChild
               // onBlur={onInputBlur}
               className="w-64 max-sm:w-44"
-              value={searchValue}
-              onValueChange={onSearchValueChange}
               onKeyDown={(e) => setOpen(e.key !== "Escape")}
               onMouseDown={() => setOpen((open) => !!searchValue || !open)}
               onFocus={() => setOpen(true)}
             >
-              <Input className="" placeholder={placeholder} />
+              <Input
+                      ref={inputRef}
+
+                onChange={(e) => onSearchValueChange(e.target.value)}
+                value={searchValue}
+                className="pr-8"
+                placeholder={placeholder}
+              />
             </CommandPrimitive.Input>
           </PopoverAnchor>
+          {searchValue !== "" && (
+            <button
+              className="absolute right-2 top-1/2 flex h-6 w-6 -translate-y-1/2 items-center justify-center rounded-full"
+              onClick={() => onSearchValueChange("")}
+            >
+              <span className="text-2xl text-red-500">&times;</span>
+            </button>
+          )}
           {!open && <CommandList aria-hidden="true" />}
           <PopoverContent
             asChild
@@ -78,11 +97,11 @@ export function AutoComplete({
                   </div>
                 </CommandPrimitive.Loading>
               )}
-              {items.length > 0 && !isLoading ? (
+              {uniqueItems.length > 0 && !isLoading ? (
                 <CommandGroup>
-                  {items.map((option) => (
+                  {uniqueItems.map((option) => (
                     <CommandItem
-                      key={option.name}
+                      key={option.id}
                       onMouseDown={(e) => e.preventDefault()}
                       onSelect={() =>
                         onSelectItem({
